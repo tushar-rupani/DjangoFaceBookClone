@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+
+{% block title %}
+
+My Profile Page
+
+{% endblock title %}
+
+
+{% block content %}
+
+
+<div class="ui modal mymodal">
+  <i class="close icon"></i>
+  <div class="header">
+    Update your profile
+  </div>
+  <div class="image content">
+    <div class="ui medium image">
+
+    	<img src="{{obj.avtar.url}}"/>
+     
+    </div>
+    <div class="description">
+      <div class="ui header">Update your data, tell us something new!</div>
+      <form action="" method="POST" class="ui form" enctype="multipart/form-data">
+
+			{% csrf_token %}
+
+			{{form.as_p}}
+			<br>
+    </div>
+  </div>
+  <div class="actions">
+    <button type="submit" class="ui positive right labeled icon button">  Yep, go ahead!
+     
+      <i class="checkmark icon"></i>
+      </button>
+  </form>
+    </div>
+  </div>
+
+
+
+<h2> My Profile </h2>
+
+<div class="ui segment">
+
+	{% if confirm %}
+	<div class="ui success message" id="alert-box">
+  <i class="close icon" id="alert-close"></i>
+  <div class="header">
+    Your data has been updated successfully.
+  </div>
+  <p>Your new data is now visible to everyone!Cheers.</p>
+</div>
+
+{% endif %}
+<h3>Username: <b><i>{{request.user}}</i></b></h3>
+<div class="grid">
+	 <div class="ui grid">
+        <div class='row'>
+            <div class='six wide column'>
+                <img class="ui medium rounded image" src="{{obj.avtar.url}}">
+                <div class="row mt-5">
+                    <div class="ui statistics">
+
+                        <div class="statistic">
+                            <div class="value">
+                              {{obj.get_posts_no}}
+                            </div>
+                            <div class="label">
+                              Posts
+                            </div>
+                          </div>
+
+
+                          <div class="statistic">
+                            <div class="value">
+                             <a href="{% url 'profiles:followers' obj.pk %}">{{obj.get_friend_no}}</a>
+                            </div>
+                            <div class="label">
+                              Friends
+                            </div>
+                          </div>
+
+                          
+
+                          
+
+                        </div>
+                        <br>
+                        <br>
+                    <button class='ui secondary button' id='modal-btn'>Update your profile</button>
+                </div>
+            </div>
+            <div class="ten wide column">
+                <table class="ui table">
+                    <tbody>
+                        <tr>
+                            <td>Username</td>
+                            <td>{{obj.user}}</td>
+                        </tr>
+                        <tr>
+                            <td>First Name</td>
+                            <td>{{obj.first_name}}</td>
+                        </tr>
+                        <tr>
+                            <td>Last Name</td>
+                            <td>{{obj.last_name}}</td>
+                        </tr>
+                        <tr>
+                            <td>Bio</td>
+                            <td>{{obj.bio}}</td>
+                        </tr>
+                        <tr>
+                            <td>Number of friends</td>
+                            <td>{{obj.get_friend_no}}</td>
+                        </tr>
+                        
+                         <tr>
+                            <td>Posts Number</td>
+                            <td>{{obj.get_posts_no}}</td>
+                        </tr>
+
+                        <tr>
+                            <td>Likes Given</td>
+                            <td>{{obj.get_likes_given_no}}</td>
+                        </tr>
+
+                        <tr>
+                            <td>Likes Received</td>
+                            <td>{{obj.likes_received}}</td>
+                        </tr>
+                   
+
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+{% endblock content %}
+
+
+  {% block scripts %}
+
+  <script type="text/javascript">
+
+  	const alert = document.getElementById('alert-box')
+	
+	$(document).ready(function(){
+		$('#modal-button').click(function(){
+        console.log('working')
+        $('.ui.modal')
+        .modal('show');
+    })
+		$('#alert-close').click(function(){
+
+			console.log("Working..")
+			document.getElementById("alert-box").style.display = "none";
+
+		})
+
+   })
+
+</script>
+
+    {% endblock scripts %}
+

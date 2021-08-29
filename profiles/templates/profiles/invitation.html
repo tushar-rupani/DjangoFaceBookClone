@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}
+
+Get requests for {{profile.user}}
+
+{% endblock title %}
+
+{% block content %}
+
+
+{% if is_empty %}
+	<h1>No requests..</h1>
+{% endif %}
+
+	{% for qs in obj %}
+	<div class="ui segment">
+		<div class="ui grid">
+			<div class="row">
+				<div class="three wide column">
+					<img src="{{qs.avtar.url}}" class="ui small circular image">
+				</div>
+				<div class="thirteen wide column">
+					<h2>{{qs.user}}</h2>
+					<p>{{qs.bio}}</p>
+					<a href=""><button class="ui primary button" style="width: 190px;">See Profile</button></a>
+					<form action="{% url 'profiles:accept-invite' %}" method="POST">
+						{% csrf_token %}
+						<input type="hidden" name="profile_pk" value="{{qs.pk}}">
+						<button type="submit" class="ui positive basic button" style="margin-top: 5px; width: 190px;">
+							<i class="check icon"></i>
+							Accept Invite
+						</button>
+					</form>
+
+					<form action="{% url 'profiles:reject-invite' %}" method="POST">
+						{% csrf_token %}
+						<input type="hidden" name="profile_pk" value="{{qs.pk}}">
+						<button type="submit" class="ui negative basic button" style="margin-top: 5px; width: 190px;">
+							<i class="close icon"></i>
+							Reject Invite
+						</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+		
+	{% endfor %}
+
+{% endblock content %}

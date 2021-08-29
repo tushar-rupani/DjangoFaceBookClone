@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Chat with your friends!
+{% endblock title %}
+
+    {% block content %}
+    
+      
+   <div class="ui grid">
+    <div class="row">
+      <div class="four wide column">
+      </div>
+      <div class="eight wide column">
+        <div class="ui segment">
+          <h2>Chat with your friends!!</h2>
+        <form id="post-form" method="POST" action="checkview" class="ui form">
+        {% csrf_token %}
+        <label>Username</label>
+        <input type="text" name="username" id="username" width="100px" value="{{request.user.username}}" /> <br>
+        <label style="margin-top:10px">Room Name</label>
+        <input type="text"  name="room_name" id="room_name" width="100px" />
+        
+
+        <input type="submit" value="Enter Room" class="ui primary button" style="margin-top:10px">
+       </form>
+
+  </div>
+      </div>
+
+      <div class="four wide column">
+      </div>
+    </div>
+   </div>
+
+ 
+
+    {% endblock content %}
+
+
+
+</body>
+
+
+</html>

@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+{% block title %}
+
+Profile Information of {{object.user}}
+
+
+{% endblock title %}
+
+{% block content %}
+
+<div class="ui grid">
+	<br>
+	<div class="row">
+		<div class="four wide column">
+			<img src="{{object.avtar.url}}" class="ui medium rounded image" style="margin-bottom: 7px;">
+			 Username: <b>{{object.user}}</b>
+
+			 <div class="row mt-5">
+                    <div class="ui statistics">
+
+                        <div class="statistic">
+                            <div class="value">
+                              {{object.get_posts_no}}
+                            </div>
+                            <div class="label">
+                              Posts
+                            </div>
+                          </div>
+
+
+                          <div class="statistic">
+                            <div class="value">
+                             <a href="{% url 'profiles:followers' object.pk %}">{{object.get_friend_no}}</a>
+                            </div>
+                            <div class="label">
+                              Friends
+                            </div>
+                          </div>
+                        </div>
+                        <br>
+                        <br>
+                    
+                </div>
+
+			 
+
+				{% if myprof %}
+
+					<a href="{% url 'profiles:my-profile' %}"><button class="ui secondary basic button"><i class="user icon"></i>Edit Profile</button></a>
+
+				{% elif request.user in object.blocked_users.all %}
+
+				<h2> You're blocked from following {{object.user}}
+
+				{% else %}
+
+							{% if object.user in blocked %}
+
+								 <form action="{% url 'profiles:unblock-user' %}" method="POST">
+			                    {% csrf_token %}
+			                    <input type="hidden" name="profile_pk" value={{object.pk}}>
+			                    <button type="submit" class="ui positive button mb-5 w-big">Unblock {{object.user}}</button>
+			            </form>
+
+							{% else %}
+
+
+								{% if object.user not in rel_receiver and object.user not in rel_sender %}
+
+								
+			                     	<form action="{% url 'profiles:send-invite' %}" method="POST">
+					                    {% csrf_token %}
+					                    <input type="hidden" name="profile_pk" value={{object.pk}}>
+					                    <button type="submit" class="ui positive basic button mb-5 w-big"><i class="plus square icon"></i>Add to friends</button>
+					                </form>
+			                   
+			                
+	            	{% endif %}
+
+			            {% if object.user in rel_receiver and request.user not in object.friends.all %}
+			                <button class="ui disabled button mb-5 w-big"><i class="user icon"></i>Waiting for approval</button>
+			            {% endif %}
+
+			            {% if request.user in object.friends.all %}
+			                <form action="{% url 'profiles:remove-friend' %}" method="POST">
+			                    {% csrf_token %}
+			                    <input type="hidden" name="profile_pk" value={{object.pk}}>
+			                    <button type="submit" class="ui negative basic button mb-5 w-big"><i class="minus square icon"></i>Remove from friends</button>
+			                </form>
+			            {% endif %}
+			            <br>
+			            <form action="{% url 'profiles:block-user' %}" method="POST">
+			                    {% csrf_token %}
+			                    <input type="hidden" name="profile_pk" value={{object.pk}}>
+			                    <button type="submit" class="ui negative button mb-5 w-big">Block {{object.user}}</button>
+			            </form>
+			         {% endif %}
+
+			            
+
+			           
+
+		         {% endif %}
+		           
+	</div>
+
+		<div class="twelve wide column">
+
+			{% if object.user in blocked %}
+
+			<h2> You've blocked {{object.user}}, You can't see their posts.
+
+			<center>{% elif request.user in object.blocked_users.all %}</center>
+
+			<h2> You can't see {{object.user}}'s posts, they have blocked you! </h2>
+
+			{% else %}
+
+							{% if length %}
+
+							{% for post in posts %}
+								<div class="ui segment fluid">
+									{{post.content}}<br>
+									<i class="thumbs up icon"></i>{{post.get_likes_no}}
+								</div>
+							{% endfor %}
+
+							{% endif %}
+				{% endif %}
+		</div>
+	</div>
+</div>
+
+{% endblock content %}

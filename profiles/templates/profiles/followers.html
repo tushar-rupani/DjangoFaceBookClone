@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Followers of {{profile.user}}
+{% endblock title  %}
+
+{% block content %}
+
+{% for qs in obj %}
+<div class="ui segment">
+				
+	<div class="ui grid">
+			<div class="row">
+					<div class="four wide column">
+						<img class="ui small circular image" src="{{qs.avtar.url}}">
+					</div>
+					<div class="eight wide column">
+						<a href="{{qs.get_absolute_url}}"><h3>{{qs.user}}</h3></a>
+						{% ifequal request.user.username qs.user.username  %}
+
+						<a href="{% url 'profiles:my-profile' %}">
+							<button class="ui secondary basic button" style="margin-top: 7px; width: 190px;" >
+							<i class="user icon"></i>
+						Edit Profile</button>
+						</a>
+						{% else %}
+
+
+								{% if qs.user not in rel_sender and qs.user not in rel_receiver %}
+								<form action="{% url 'profiles:send-invite' %}" method="POST">
+									{% csrf_token %}
+									<input type="hidden" name="profile_pk" value="{{qs.pk}}">
+									
+										<button type="submit" class="ui positive basic button mb-5 w-big" style="margin-top: 7px; width: 190px;"><i class="plus square icon"></i>Add to friends</button>
+
+								</form>
+								{% endif %}
+
+							{% if qs.user in rel_receiver and request.user not in qs.friends.all %}
+
+								<button class="ui disabled button mb-5 w-big"><i class="user icon"></i>Waiting for approval</button>
+
+								<form action="{% url 'profiles:remove-friend' %}" method="POST">
+									{% csrf_token %}
+									<input type="hidden" name="profile_pk" value="{{qs.pk}}">
+									
+										<button type="submit" class="ui negative basic button mb-5 w-big"><i class="minus square icon"></i>Cancel Request</button>
+								</form>
+
+							{% endif %}
+
+							{% if request.user in qs.friends.all %}
+								<form action="{% url 'profiles:remove-friend' %}" method="POST">
+									{% csrf_token %}
+									<input type="hidden" name="profile_pk" value="{{qs.pk}}">
+									
+										<button type="submit" class="ui negative basic button mb-5 w-big"><i class="minus square icon"></i>Remove from friends</button>
+								</form>
+							{% endif %}
+
+						{% endifequal %}
+					</div>
+						<div class="four wide column">
+						</div>
+			</div>
+
+	</div>
+</div>
+
+{% endfor %}
+
+{% endblock content %}

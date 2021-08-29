@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}
+
+Blocked Friends
+
+{% endblock title %}
+
+{% block content %}
+
+{% if count %}
+
+{% for obj in list %}
+<div class="ui segment">
+	<div class="ui grid">
+		<div class="row">
+
+			<div class="four wide column">
+					<img src="{{obj.avtar.url}}" class="ui small circular image" style="margin-bottom: 7px; width: 200px; height: 150px;">
+					
+			</div>
+
+			<div class="eight wide column">
+				<h2>{{obj.user}}</h2>
+				<form action="{% url 'profiles:unblock-user' %}" method="POST">
+			                    {% csrf_token %}
+			                    <input type="hidden" name="profile_pk" value={{obj.pk}}>
+			                    <button type="submit" class="ui positive button mb-5 w-big">Unblock {{obj.user}}</button>
+			    </form>
+			</div>
+		</div>
+	</div>
+</div>
+{% endfor %}
+{% else %}
+<h2> You have not blocked anyone! </h2>
+{% endif %}
+
+{% endblock content %}

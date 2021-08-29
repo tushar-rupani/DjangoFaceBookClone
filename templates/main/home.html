@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}
+
+Welcome to bffbook!
+
+{% endblock title %}
+
+{% block content %}
+
+{% if no_login %}
+
+<div class="ui grid" style="margin-top: 70px;">
+	<div class="row">
+		<div class="four wide column">
+		</div>
+		<div class="eight wide column">
+
+				<div class="ui placeholder segment">
+					<br>
+				  <div class="ui icon header">
+				    <i class="external alternate icon"></i>
+				    Seems like you're not logged in yet, login to connect with friends.
+				  </div>
+				  <div class="inline">
+				    <center><a href="{% url 'account_login' %}"><button class="ui primary basic button"> Login </button></a></center>
+
+				    
+				  </div>
+				  <br>
+				  <br>
+				</div>
+
+			</div>
+		</div>
+	</div>
+{% endif %}
+
+
+{% endblock content %}
+
+{% block scripts %}
+<script>
+	
+	$(document).ready(function(){
+		console.log("hello World")
+	})
+
+
+</script>
+
+
+
+{% endblock scripts %}

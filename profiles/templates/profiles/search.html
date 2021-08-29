@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}
+
+Search
+{% endblock title %}
+
+{% block content %}
+
+{{is_empty}}
+
+{% if is_empty %}
+<h2> No Profile here </h2>
+{% endif %}
+
+
+	{% for qs in all_profiles %}
+
+	<div class="ui segment">
+		<div class="ui grid">
+			<div class="row">
+				<div class="three wide column">
+					<img src="{{qs.avtar.url}}" class="ui small circular image" width="100px" height="100px">
+				</div>
+				<div class="thirteen wide column">
+					<h2> {{qs.user}} </h2>
+					<h4> {{qs.bio}} </h4>
+					<a href="{{qs.get_absolute_url}}"><button class="ui primary button">See Profile</button></a>
+
+					{% if qs.user in blocked %}
+
+					<form action="{% url 'profiles:unblock-user' %}" method="POST">
+							{% csrf_token %}
+							<input type="hidden" name="profile_pk" value="{{qs.pk}}">
+							
+								<button type="submit" class="ui positive button mb-5 w-big" style="margin-top:10px"><i class="check icon"></i>Unblock {{qs.user}}</button>
+
+						</form>
+
+					{% elif request.user in qs.blocked_users.all %}
+
+					<h3> You can't follow them </h3>
+
+					{% else %}
+
+					{% if qs.user not in rel_sender and qs.user not in rel_receiver %}
+						<form action="{% url 'profiles:send-invite' %}" method="POST">
+							{% csrf_token %}
+							<input type="hidden" name="profile_pk" value="{{qs.pk}}">
+							
+								<button type="submit" class="ui positive basic button mb-5 w-big"><i class="plus square icon"></i>Add to friends</button>
+
+						</form>
+					{% endif %}
+
+					{% if qs.user in rel_receiver and request.user not in qs.friends.all %}
+
+						<button class="ui disabled button mb-5 w-big"><i class="user icon"></i>Waiting for approval</button>
+
+						<form action="{% url 'profiles:remove-friend' %}" method="POST">
+							{% csrf_token %}
+							<input type="hidden" name="profile_pk" value="{{qs.pk}}">
+							
+								<button type="submit" class="ui negative basic button mb-5 w-big"><i class="minus square icon"></i>Cancel Request</button>
+						</form>
+
+					{% endif %}
+
+					{% if request.user in qs.friends.all %}
+						<form action="{% url 'profiles:remove-friend' %}" method="POST">
+							{% csrf_token %}
+							<input type="hidden" name="profile_pk" value="{{qs.pk}}">
+							
+								<button type="submit" class="ui negative basic button mb-5 w-big"><i class="minus square icon"></i>Remove from friends</button>
+						</form>
+					{% endif %}
+				{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+		
+	{% endfor %}
+
+{% endblock content %}

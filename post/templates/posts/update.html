@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Update your post
+{% endblock title %}
+
+
+{% block content %}
+
+<form class="ui form" action="" enctype="multipart/form-data" method="POST">
+{% csrf_token %}
+
+{{form.as_p}}
+
+<button class="ui primary button" type="submit">Update</button>
+</form>
+
+{% endblock content %}

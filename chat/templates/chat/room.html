@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Chat in {{room}} room
+{% endblock title %}
+{% block content %}
+
+<div id="display" style="margin-bottom: 10px;">
+</div>
+
+<div class="ui grid">
+  <div class="row">
+    <div class="four wide column">
+    </div>
+    <div class="eight wide column">
+
+         <form id="post-form" class="ui form">
+            {% csrf_token %}
+            <input type="hidden" name="username" id="username" value="{{username}}"/>
+            <input type="hidden" name="room_id" id="room_id" value="{{room_details.id}}"/>
+            <input type="hidden" name="room_name" id="room_name" value="{{room_details.name}}"/>
+
+            <input type="text" placeholder="Write a message" name="message" id="message" width="100px" />
+            <input type="submit" value="Send" class="ui positive button" style="margin-top:10px">
+
+               
+        </form>
+                <form id="pform">
+                {% csrf_token %}
+                <input type="submit" class="ui negative button" style="margin-top: 10px; margin-bottom: 10px;" value="Delete all messages & left room.">
+               </form>
+
+    </div>
+    <div class="four wide column">
+    </div>
+  </div>
+
+</div>
+   
+
+    
+
+{% endblock content %}
+
+{% block scripts %}
+
+<script>
+  
+  console.log("Working")
+
+  $(document).on('submit', '#pform', function(e){
+
+    e.preventDefault()
+    $.ajax({
+      type:'POST',
+      url: '/chat/delete/{{room_details.id}}',
+      data:{
+         csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+      },
+      success: function(response){
+        alert("Deleted, leave now")
+        window.location.href = "/chat"
+      }
+
+    })
+
+  })
+  $(document).ready(function(){
+    setInterval(function(){
+      $.ajax({
+        type: 'GET',
+        url: '/chat/getMessages/{{room}}',
+        success: function(response){
+          console.log(response)
+          $('#display').empty()
+          for(var key in response.messages)
+          {
+            var temp = "<div class='ui segment'> <b>" + response.messages[key].user + "</b><p>" + response.messages[key].value + "</p><span class='right floated'>" + response.messages[key].date + "</span>" 
+            $('#display').append(temp)
+          }
+        },
+      })
+    }, 1000)
+  })
+
+  $(document).on('submit', '#post-form', function(e){
+    e.preventDefault()
+    $.ajax({
+      type: 'POST',
+      url: '/chat/send',
+      data:{
+        username: $('#username').val(),
+        room_id: $('#room_id').val(),
+        
+        message : $('#message').val(),
+        csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+      },
+
+      success: function(response){
+        console.log(response)
+      }
+
+    })
+
+     document.getElementById('message').value = ''
+  })
+
+</script>
+{% endblock scripts %}
